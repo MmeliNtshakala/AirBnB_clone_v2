@@ -15,8 +15,8 @@ class Basemodel:
     def __init__(self, *args, **kwargs):
         if (len(kwargs) == 0):
             self.id = str(uuid.uuid4())
-            self.created_at = datetime.utcnow()
-            self.updated_at = datetime.utcnow()
+            self.created_at = datetime.now()
+            self.updated_at = datetime.now()
             models.storage.new(self)
          else:
             kwargs["created_at"] = datetime.datetime.strptime(
@@ -27,9 +27,9 @@ class Basemodel:
                 kwargs["updated_at"],
                 "%Y-%m-%dT%H:%M:%S.%f"
             )
-            for key, value in kwargs.items():
-                if key != "__class__":
-                    setattr(self, key, value)
+            for keys, value in kwargs.items():
+                if keys != "__class__":
+                    setattr(self, keys, value)
 
 
     def save(self):
@@ -39,6 +39,13 @@ class Basemodel:
         self.updated_at = datetime.utcnow()
         #CALL THE SAVE
         models.storage.save()
+
+        def __str__(self):
+        """
+            Returns everything in base model as string
+        """
+        string = "[{}] ({}) {}"
+        return string.format(type(self).__name__, self.id, self.__dict__)
 
     def to_dict(self):
         """
@@ -51,11 +58,3 @@ class Basemodel:
         dcti["updated_at"] = self.updated_at.isoformat()
 
         return dcti
-
-    def __str__(self):
-        """
-            Returns everything in base model as string
-        """
-        string = "[{}] ({}) {}"
-        return string.format(type(self).__name__, self.id, self.__dict__)
-
